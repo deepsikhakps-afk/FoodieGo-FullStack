@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodieGo - Order Food Online</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --primary:#e23744;
+    --primary-dark:#c72c38;
+    --accent:#ffc93c;
+    --bg:#f7f7f9;
+    --dark:#1c1c1c;
+  }
+  body{background:var(--bg);font-family:'Segoe UI',Roboto,sans-serif;color:var(--dark);}
+  .navbar-brand{font-weight:800;color:var(--primary)!important;font-size:1.6rem;letter-spacing:-1px;}
+  .navbar-brand span{color:var(--dark);}
+  .navbar{box-shadow:0 2px 10px rgba(0,0,0,.08);background:#fff!important;}
+  .hero{
+    background:linear-gradient(120deg, rgba(226,55,68,.92), rgba(199,44,56,.92)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200') center/cover;
+    color:#fff;padding:70px 0 50px;border-radius:0 0 30px 30px;
+  }
+  .hero h1{font-weight:800;font-size:2.6rem;}
+  .search-box{background:#fff;border-radius:12px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.15);}
+  .search-box input{border:none;}
+  .search-box input:focus{box-shadow:none;}
+  .filter-chip{
+    border:1.5px solid #ddd;border-radius:20px;padding:6px 16px;font-size:.85rem;font-weight:600;
+    background:#fff;cursor:pointer;transition:.2s;white-space:nowrap;
+  }
+  .filter-chip i{margin-right:5px;color:var(--primary);}
+  .filter-chip.active, .filter-chip:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .filter-chip.active i, .filter-chip:hover i{color:#fff;}
+  .filter-scroll{overflow-x:auto;padding-bottom:6px;}
+  .filter-scroll::-webkit-scrollbar{height:5px;}
+  .card-rest{
+    border:none;border-radius:16px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.07);
+    transition:.25s; cursor:pointer;background:#fff;height:100%;
+  }
+  .card-rest:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(0,0,0,.15);}
+  .card-rest img{height:170px;object-fit:cover;width:100%;}
+  .rating-badge{
+    background:#267e3e;color:#fff;font-weight:700;font-size:.8rem;
+    padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;
+  }
+  .badge-offer{background:var(--accent);color:#3a2a00;font-weight:700;font-size:.7rem;padding:4px 8px;border-radius:6px;}
+  .veg-dot{width:14px;height:14px;border:2px solid #2e7d32;display:inline-block;position:relative;border-radius:3px;}
+  .veg-dot::after{content:"";width:6px;height:6px;background:#2e7d32;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+  .nonveg-dot{width:14px;height:14px;border:2px solid #b71c1c;display:inline-block;position:relative;border-radius:3px;}
+  .nonveg-dot::after{content:"";width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:7px solid #b71c1c;position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);}
+  .section-title{font-weight:800;font-size:1.5rem;margin:30px 0 18px;}
+  .menu-item{border-bottom:1px solid #eee;padding:16px 0;display:flex;justify-content:space-between;gap:16px;}
+  .menu-item img{width:100px;height:90px;object-fit:cover;border-radius:10px;}
+  .btn-add{
+    background:#fff;border:1.5px solid var(--primary);color:var(--primary);font-weight:700;
+    border-radius:8px;padding:5px 18px;font-size:.85rem;
+  }
+  .btn-add:hover{background:var(--primary);color:#fff;}
+  .cart-panel{
+    position:fixed;top:0;right:-420px;width:400px;max-width:95vw;height:100vh;background:#fff;
+    box-shadow:-6px 0 25px rgba(0,0,0,.2);z-index:1050;transition:.35s;display:flex;flex-direction:column;
+  }
+  .cart-panel.open{right:0;}
+  .cart-header{background:var(--primary);color:#fff;padding:18px;display:flex;justify-content:space-between;align-items:center;}
+  .cart-body{flex:1;overflow-y:auto;padding:14px 18px;}
+  .cart-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;}
+  .qty-box{display:flex;align-items:center;border:1px solid var(--primary);border-radius:6px;overflow:hidden;}
+  .qty-box button{background:var(--primary);color:#fff;border:none;width:26px;height:26px;font-weight:700;}
+  .qty-box span{width:28px;text-align:center;font-weight:600;}
+  .cart-footer{padding:16px 18px;border-top:1px solid #eee;background:#fafafa;}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1040;display:none;}
+  .overlay.show{display:block;}
+  .coupon-box{border:1.5px dashed var(--primary);border-radius:10px;padding:10px;background:#fff5f5;}
+  .fab-cart{
+    position:fixed;bottom:24px;right:24px;background:var(--primary);color:#fff;border-radius:50px;
+    padding:14px 22px;font-weight:700;box-shadow:0 8px 20px rgba(226,55,68,.4);z-index:1030;border:none;
+  }
+  .footer{background:var(--dark);color:#bbb;padding:40px 0;margin-top:60px;}
+  .rest-modal-header{height:200px;object-fit:cover;width:100%;}
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px;}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="fa-solid fa-utensils"></i> Foodie<span>Go</span></a>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <span class="d-none d-md-inline"><i class="fa-solid fa-location-dot text-danger"></i> Talwara, Punjab</span>
+      <button class="btn btn-outline-danger btn-sm" onclick="alert('Login modal here')"><i class="fa-solid fa-user"></i> Login</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero text-center">
+  <div class="container">
+    <h1>Order food you'll drool over 🍔</h1>
+    <p class="fs-5 mb-4">Discover the best restaurants near you</p>
+    <div class="search-box d-flex mx-auto" style="max-width:600px;">
+      <input id="searchInput" type="text" class="form-control form-control-lg" placeholder="Search restaurant or dish...">
+      <button class="btn btn-danger px-4" onclick="renderRestaurants()"><i class="fa-solid fa-search"></i></button>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <!-- FILTERS -->
+  <div class="filter-scroll d-flex gap-2 mt-4">
+    <div class="filter-chip" data-filter="under100"><i class="fa-solid fa-indian-rupee-sign"></i>Under ₹100</div>
+    <div class="filter-chip" data-filter="under200"><i class="fa-solid fa-indian-rupee-sign"></i>Under ₹200</div>
+    <div class="filter-chip" data-filter="bogo"><i class="fa-solid fa-gift"></i>Buy 1 Get 1</div>
+    <div class="filter-chip" data-filter="veg"><i class="fa-solid fa-leaf"></i>Pure Veg</div>
+    <div class="filter-chip" data-filter="nonveg"><i class="fa-solid fa-drumstick-bite"></i>Non-Veg</div>
+    <div class="filter-chip" data-filter="fast"><i class="fa-solid fa-bolt"></i>Fast Delivery</div>
+    <div class="filter-chip" data-filter="rating"><i class="fa-solid fa-star"></i>Rating 4.0+</div>
+  </div>
+
+  <h2 class="section-title">Restaurants near you <span id="resultCount" class="text-muted fs-6"></span></h2>
+  <div id="restGrid" class="row g-4"></div>
+</div>
+
+<!-- RESTAURANT MENU MODAL -->
+<div class="modal fade" id="menuModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content" style="border-radius:16px;overflow:hidden;">
+      <img id="modalImg" class="rest-modal-header" src="">
+      <div class="modal-header border-0">
+        <div>
+          <h4 class="modal-title fw-bold" id="modalName"></h4>
+          <small class="text-muted" id="modalCuisine"></small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-0" id="modalMenu"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CART -->
+<div class="overlay" id="overlay" onclick="toggleCart(false)"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <h5 class="mb-0"><i class="fa-solid fa-cart-shopping"></i> Your Cart</h5>
+    <button class="btn-close btn-close-white" onclick="toggleCart(false)"></button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-footer">
+    <div class="coupon-box mb-3">
+      <div class="d-flex gap-2">
+        <input id="couponInput" class="form-control form-control-sm" placeholder="Enter coupon code">
+        <button class="btn btn-sm btn-warning fw-bold" onclick="applyCoupon()">Apply</button>
+      </div>
+      <small class="text-muted">Try: <b>FOODIE50</b>, <b>WELCOME20</b>, <b>BOGO</b></small>
+      <div id="couponMsg" class="small mt-1 fw-semibold"></div>
+    </div>
+    <div id="billSummary" class="small"></div>
+    <button class="btn btn-danger w-100 mt-2 fw-bold" onclick="placeOrder()">Place Order</button>
+  </div>
+</div>
+<button class="fab-cart" onclick="toggleCart(true)"><i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cartCount">0</span>)</button>
+
+<footer class="footer text-center">
+  <div class="container">
+    <h5 class="text-white"><i class="fa-solid fa-utensils"></i> FoodieGo</h5>
+    <p class="mb-1">MCA Project — Restaurant Food Ordering System</p>
+    <small>Frontend: HTML, CSS, Bootstrap, JS (React-ready) | Backend: Node.js, Express.js, REST API | DB: MySQL / MongoDB</small>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ---------------- DATA (fetched live from backend REST API) ----------------
+const API_BASE = window.location.origin + '/api';
+let restaurants = [];
+
+async function loadRestaurants(){
+  try{
+    const res = await fetch(`${API_BASE}/restaurants`);
+    const json = await res.json();
+    if(json.success){
+      restaurants = json.data.map(r=>({
+        id:r.id, name:r.name, cuisine:r.cuisine, img:r.image, rating:r.rating,
+        time:r.delivery_time, offer:r.offer,
+        menu: r.menu.map(m=>({n:m.name,p:m.price,veg:!!m.is_veg,bogo:!!m.is_bogo,img:m.image}))
+      }));
+    }
+  }catch(e){
+    document.getElementById('restGrid').innerHTML = `<div class="text-center text-danger py-5">
+      <i class="fa-solid fa-triangle-exclamation fa-2x mb-2"></i>
+      <p>Could not reach backend API at ${API_BASE}.<br>Make sure the Node.js server is running (npm start in /backend).</p></div>`;
+    return;
+  }
+  renderRestaurants();
+}
+
+let activeFilters = new Set();
+let cart = {}; // {itemName: {...item, qty, restName}}
+let appliedCoupon = null;
+
+// ---------------- RENDER RESTAURANTS ----------------
+function restMatchesFilter(r){
+  if(activeFilters.size===0) return true;
+  const prices = r.menu.map(m=>m.p);
+  const minP = Math.min(...prices);
+  let ok = true;
+  activeFilters.forEach(f=>{
+    if(f==='under100') ok = ok && minP<100;
+    if(f==='under200') ok = ok && minP<200;
+    if(f==='bogo') ok = ok && r.menu.some(m=>m.bogo);
+    if(f==='veg') ok = ok && r.menu.every(m=>m.veg);
+    if(f==='nonveg') ok = ok && r.menu.some(m=>!m.veg);
+    if(f==='fast') ok = ok && r.time<=20;
+    if(f==='rating') ok = ok && r.rating>=4.0;
+  });
+  return ok;
+}
+
+function renderRestaurants(){
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const grid = document.getElementById('restGrid');
+  grid.innerHTML = '';
+  let count = 0;
+  restaurants.forEach(r=>{
+    const matchesSearch = r.name.toLowerCase().includes(q) || r.cuisine.toLowerCase().includes(q) || r.menu.some(m=>m.n.toLowerCase().includes(q));
+    if(!matchesSearch || !restMatchesFilter(r)) return;
+    count++;
+    grid.innerHTML += `
+    <div class="col-md-6 col-lg-4">
+      <div class="card-rest" onclick="openMenu(${r.id})">
+        <div class="position-relative">
+          <img src="${r.img}" alt="${r.name}">
+          <span class="badge-offer position-absolute top-0 start-0 m-2">${r.offer}</span>
+        </div>
+        <div class="p-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="fw-bold mb-1">${r.name}</h5>
+            <span class="rating-badge"><i class="fa-solid fa-star" style="font-size:.7rem;"></i>${r.rating}</span>
+          </div>
+          <p class="text-muted small mb-1">${r.cuisine}</p>
+          <p class="small mb-0"><i class="fa-solid fa-clock text-muted"></i> ${r.time} mins delivery</p>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('resultCount').textContent = `(${count} found)`;
+  if(count===0) grid.innerHTML = `<div class="text-center text-muted py-5"><i class="fa-solid fa-face-frown fa-2x mb-2"></i><p>No restaurants match your filters</p></div>`;
+}
+
+document.querySelectorAll('.filter-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    const f = chip.dataset.filter;
+    if(activeFilters.has(f)){activeFilters.delete(f);chip.classList.remove('active');}
+    else{activeFilters.add(f);chip.classList.add('active');}
+    renderRestaurants();
+  });
+});
+document.getElementById('searchInput').addEventListener('input',renderRestaurants);
+
+// ---------------- MENU MODAL ----------------
+let currentRest = null;
+function openMenu(id){
+  currentRest = restaurants.find(r=>r.id===id);
+  document.getElementById('modalImg').src = currentRest.img;
+  document.getElementById('modalName').textContent = currentRest.name;
+  document.getElementById('modalCuisine').textContent = currentRest.cuisine + ' • ⭐ ' + currentRest.rating + ' • ' + currentRest.time + ' mins';
+  const menuDiv = document.getElementById('modalMenu');
+  menuDiv.innerHTML = currentRest.menu.map(m=>`
+    <div class="menu-item">
+      <div class="d-flex gap-3">
+        <img src="${m.img}">
+        <div>
+          <div class="${m.veg?'veg-dot':'nonveg-dot'} mb-1"></div>
+          <div class="fw-semibold">${m.n} ${m.bogo?'<span class="badge bg-warning text-dark ms-1" style="font-size:.65rem;">BOGO</span>':''}</div>
+          <div class="text-muted">₹${m.p}</div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center">
+        <button class="btn-add" onclick="addToCart('${escapeQ(m.n)}',${m.p},${m.veg},${m.bogo},'${escapeQ(currentRest.name)}')">ADD</button>
+      </div>
+    </div>
+  `).join('');
+  new bootstrap.Modal(document.getElementById('menuModal')).show();
+}
+function escapeQ(s){return s.replace(/'/g,"\\'");}
+
+// ---------------- CART ----------------
+function addToCart(name, price, veg, bogo, restName){
+  const key = name;
+  if(!cart[key]) cart[key] = {name, price, veg, bogo, restName, qty:0};
+  cart[key].qty += 1;
+  renderCart();
+}
+function changeQty(key, delta){
+  cart[key].qty += delta;
+  if(cart[key].qty<=0) delete cart[key];
+  renderCart();
+}
+function toggleCart(open){
+  document.getElementById('cartPanel').classList.toggle('open', open);
+  document.getElementById('overlay').classList.toggle('show', open);
+}
+function renderCart(){
+  const body = document.getElementById('cartBody');
+  const items = Object.keys(cart);
+  document.getElementById('cartCount').textContent = items.reduce((a,k)=>a+cart[k].qty,0);
+  if(items.length===0){
+    body.innerHTML = `<div class="text-center text-muted py-5"><i class="fa-solid fa-cart-shopping fa-2x mb-2"></i><p>Your cart is empty</p></div>`;
+    document.getElementById('billSummary').innerHTML='';
+    return;
+  }
+  body.innerHTML = items.map(k=>{
+    const it = cart[k];
+    return `<div class="cart-item">
+      <div>
+        <div class="${it.veg?'veg-dot':'nonveg-dot'} mb-1"></div>
+        <div class="fw-semibold small">${it.name}</div>
+        <div class="text-muted small">₹${it.price} x ${it.qty}</div>
+      </div>
+      <div class="qty-box">
+        <button onclick="changeQty('${k}',-1)">-</button>
+        <span>${it.qty}</span>
+        <button onclick="changeQty('${k}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+  updateBill();
+}
+
+function computeItemTotal(){
+  let total = 0;
+  Object.values(cart).forEach(it=>{
+    let qty = it.qty;
+    let payQty = qty;
+    if(it.bogo) payQty = Math.ceil(qty/2); // buy1get1
+    total += payQty * it.price;
+  });
+  return total;
+}
+
+function updateBill(){
+  const itemTotal = computeItemTotal();
+  const delivery = itemTotal>0 ? (itemTotal>299?0:40) : 0;
+  const gst = Math.round(itemTotal*0.05);
+  let discount = 0;
+  if(appliedCoupon==='FOODIE50') discount = Math.min(50, itemTotal*0.2);
+  if(appliedCoupon==='WELCOME20') discount = Math.round(itemTotal*0.2);
+  if(appliedCoupon==='BOGO') discount = 0; // informational, bogo already applied per item
+  const grandTotal = Math.max(0, itemTotal + delivery + gst - discount);
+  document.getElementById('billSummary').innerHTML = `
+    <div class="d-flex justify-content-between"><span>Item Total</span><span>₹${itemTotal}</span></div>
+    <div class="d-flex justify-content-between"><span>Delivery Fee</span><span>${delivery===0?'FREE':'₹'+delivery}</span></div>
+    <div class="d-flex justify-content-between"><span>GST & Charges</span><span>₹${gst}</span></div>
+    ${discount>0?`<div class="d-flex justify-content-between text-success"><span>Coupon Discount</span><span>-₹${discount}</span></div>`:''}
+    <hr class="my-2">
+    <div class="d-flex justify-content-between fw-bold fs-6"><span>To Pay</span><span>₹${grandTotal}</span></div>
+  `;
+}
+
+async function applyCoupon(){
+  const code = document.getElementById('couponInput').value.trim().toUpperCase();
+  const msg = document.getElementById('couponMsg');
+  const itemTotal = computeItemTotal();
+  try{
+    const res = await fetch(`${API_BASE}/coupons/apply`,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({code, itemTotal})
+    });
+    const json = await res.json();
+    if(json.success){
+      appliedCoupon = code;
+      msg.className='small mt-1 fw-semibold text-success';
+      msg.textContent = `✓ Coupon applied: ${json.coupon} (-₹${json.discount})`;
+    } else {
+      appliedCoupon = null;
+      msg.className='small mt-1 fw-semibold text-danger';
+      msg.textContent = '✗ '+(json.message||'Invalid coupon code');
+    }
+  }catch(e){
+    msg.className='small mt-1 fw-semibold text-danger';
+    msg.textContent = '✗ Could not reach server';
+  }
+  updateBill();
+}
+
+async function placeOrder(){
+  if(Object.keys(cart).length===0){ alert('Your cart is empty!'); return; }
+  const items = Object.values(cart).map(it=>({name:it.name, price:it.price, qty:it.qty, isBogo:it.bogo}));
+  try{
+    const res = await fetch(`${API_BASE}/orders`,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userName:'Guest', restaurantId: currentRest ? currentRest.id : null, items, couponCode: appliedCoupon })
+    });
+    const json = await res.json();
+    if(json.success){
+      alert(`🎉 Order #${json.orderId} placed successfully!\nTotal Paid: ₹${json.bill.grandTotal}\n\n(Saved permanently in the database.)`);
+      cart = {}; appliedCoupon = null;
+      renderCart(); toggleCart(false);
+    } else {
+      alert('Order failed: '+(json.message||'try again'));
+    }
+  }catch(e){
+    alert('Could not reach server. Is the backend running (npm start)?');
+  }
+}
+
+loadRestaurants();
+renderCart();
+</script>
+</body>
+</html>

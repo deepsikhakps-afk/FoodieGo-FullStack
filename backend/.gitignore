@@ -1,0 +1,4 @@
+node_modules/
+foodapp.db
+foodapp.db-*
+.env
