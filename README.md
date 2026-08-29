@@ -6,7 +6,7 @@ MCA Project | Full-Stack Web App
 - **Frontend:** HTML5, CSS3, Bootstrap 5, Vanilla JS (fetch API)
 - **Backend:** Node.js, Express.js (REST API)
 - **Database:** SQLite (file-based, zero-setup) — schema written in plain SQL so it's a **direct drop-in for MySQL**
-- **Auth:** JWT + bcrypt (register/login ready)
+- **Auth:** JWT + bcrypt (register/login 
 
 ## Features
 - Restaurant listing with search
