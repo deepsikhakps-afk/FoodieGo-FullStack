@@ -9,7 +9,7 @@ MCA Project | Full-Stack Web App
 - **Auth:** JWT + bcrypt (register/login ready)
 
 ## Features
-- Restaurant listing with search
+- Restaurant listing with 
 - Filters: Under ₹100, Under ₹200, Buy 1 Get 1, Veg/Non-Veg, Fast Delivery, Rating 4.0+
 - Restaurant menu modal with veg/non-veg indicators
 - Cart with quantity controls
