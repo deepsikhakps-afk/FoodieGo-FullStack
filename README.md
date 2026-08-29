@@ -1,6 +1,6 @@
 # FoodieGo — Restaurant Food Ordering System (Zomato-style)
 
-MCA Project | Full-Stack Web 
+MCA Project | Full-Stack Web App
 
 ## Tech Stack
 - **Frontend:** HTML5, CSS3, Bootstrap 5, Vanilla JS (fetch API)
