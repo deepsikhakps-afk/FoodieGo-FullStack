@@ -10,7 +10,7 @@ MCA Project | Full-Stack Web App
 
 ## Features
 - Restaurant listing with search
-- Filters: Under ₹100, Under ₹200, Buy 1 Get 1, Veg/Non-Veg, Fast Delivery, Rating 4.0+
+- Filters: Under ₹100, Under ₹200, Buy 1 Get 1, Veg/NonFast Delivery, Rating 4.0+
 - Restaurant menu modal with veg/non-veg indicators
 - Cart with quantity controls
 - Coupon codes (FOODIE50, WELCOME20, BOGO) — validated server-side
