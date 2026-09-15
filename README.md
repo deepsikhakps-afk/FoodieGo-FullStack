@@ -15,7 +15,7 @@ MCA Project | Full-Stack Web App
 - Cart with quantity controls
 - Coupon codes (FOODIE50, WELCOME20, BOGO) — validated server-side
 - Live billing: item total + delivery fee + GST + discount = grand total
-- Orders saved permanently to the database
+- Orders saved permanently to the 
 - User register/login API (JWT)
 
 ## How to Run
