@@ -22,7 +22,7 @@ MCA Project | Full-Stack Web App
 
 ```bash
 cd backend
-npm install
+npm 
 npm start
 ```
 
