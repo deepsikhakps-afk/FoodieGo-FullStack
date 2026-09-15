@@ -3,7 +3,7 @@
 MCA Project | Full-Stack Web App
 
 ## Tech Stack
-- **Frontend:** HTML5, CSS3, B 5, Vanilla JS (fetch API)
+- **Frontend:** HTML5, CSS3, Bootstrap 5, Vanilla JS (fetch API)
 - **Backend:** Node.js, Express.js (REST API)
 - **Database:** SQLite (file-based, zero-setup) — schema written in plain SQL so it's a **direct drop-in for MySQL**
 - **Auth:** JWT + bcrypt (register/login ready)
